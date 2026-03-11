@@ -4,6 +4,10 @@ import { errorSummary } from "../util.ts"
 import { setBoundedMap } from "../util.ts"
 import type { HandlerContext } from "../types.ts"
 
+/**
+ * Handles a completed assistant message: increments token and cost counters and emits
+ * either an `api_request` or `api_error` log event depending on whether the message errored.
+ */
 export function handleMessageUpdated(e: EventMessageUpdated, ctx: HandlerContext) {
   const msg = e.properties.info
   if (msg.role !== "assistant") return
@@ -77,6 +81,10 @@ export function handleMessageUpdated(e: EventMessageUpdated, ctx: HandlerContext
   })
 }
 
+/**
+ * Tracks tool execution time between `running` and `completed`/`error` part updates,
+ * records a `tool.duration` histogram measurement, and emits a `tool_result` log event.
+ */
 export function handleMessagePartUpdated(e: EventMessagePartUpdated, ctx: HandlerContext) {
   const part = e.properties.part
   if (part.type !== "tool") return

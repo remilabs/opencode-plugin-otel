@@ -24,6 +24,11 @@ import { handleSessionDiff, handleCommandExecuted } from "./handlers/activity.ts
 
 const PLUGIN_VERSION: string = (pkg as { version?: string }).version ?? "unknown"
 
+/**
+ * OpenCode plugin that exports session telemetry via OpenTelemetry (OTLP/gRPC).
+ * Instruments metrics (sessions, tokens, cost, lines of code, commits, tool durations)
+ * and structured log events. All instrumentation is gated on `OPENCODE_ENABLE_TELEMETRY`.
+ */
 export const OtelPlugin: Plugin = async ({ project, client }) => {
   const config = loadConfig()
   let minLevel: Level = "info"

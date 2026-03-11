@@ -29,7 +29,12 @@ describe("parseEnvInt", () => {
 
   test("returns fallback for float string", () => {
     process.env["TEST_INT"] = "1.5"
-    expect(parseEnvInt("TEST_INT", 42)).toBe(1)
+    expect(parseEnvInt("TEST_INT", 42)).toBe(42)
+  })
+
+  test("returns fallback for partial numeric string", () => {
+    process.env["TEST_INT"] = "5000ms"
+    expect(parseEnvInt("TEST_INT", 42)).toBe(42)
   })
 
   afterEach(() => { delete process.env["TEST_INT"] })
@@ -38,9 +43,13 @@ describe("parseEnvInt", () => {
 describe("loadConfig", () => {
   const vars = [
     "OPENCODE_ENABLE_TELEMETRY",
-    "OTEL_EXPORTER_OTLP_ENDPOINT",
-    "OTEL_METRIC_EXPORT_INTERVAL",
-    "OTEL_LOGS_EXPORT_INTERVAL",
+    "OPENCODE_OTLP_ENDPOINT",
+    "OPENCODE_OTLP_METRICS_INTERVAL",
+    "OPENCODE_OTLP_LOGS_INTERVAL",
+    "OPENCODE_OTLP_HEADERS",
+    "OPENCODE_RESOURCE_ATTRIBUTES",
+    "OTEL_EXPORTER_OTLP_HEADERS",
+    "OTEL_RESOURCE_ATTRIBUTES",
   ]
   beforeEach(() => vars.forEach((k) => delete process.env[k]))
   afterEach(() => vars.forEach((k) => delete process.env[k]))
@@ -59,24 +68,64 @@ describe("loadConfig", () => {
   })
 
   test("reads custom endpoint", () => {
-    process.env["OTEL_EXPORTER_OTLP_ENDPOINT"] = "http://collector:4317"
+    process.env["OPENCODE_OTLP_ENDPOINT"] = "http://collector:4317"
     expect(loadConfig().endpoint).toBe("http://collector:4317")
   })
 
   test("reads custom intervals", () => {
-    process.env["OTEL_METRIC_EXPORT_INTERVAL"] = "30000"
-    process.env["OTEL_LOGS_EXPORT_INTERVAL"] = "2000"
+    process.env["OPENCODE_OTLP_METRICS_INTERVAL"] = "30000"
+    process.env["OPENCODE_OTLP_LOGS_INTERVAL"] = "2000"
     const cfg = loadConfig()
     expect(cfg.metricsInterval).toBe(30000)
     expect(cfg.logsInterval).toBe(2000)
   })
 
   test("falls back to defaults for invalid interval values", () => {
-    process.env["OTEL_METRIC_EXPORT_INTERVAL"] = "notanumber"
-    process.env["OTEL_LOGS_EXPORT_INTERVAL"] = "0"
+    process.env["OPENCODE_OTLP_METRICS_INTERVAL"] = "notanumber"
+    process.env["OPENCODE_OTLP_LOGS_INTERVAL"] = "0"
     const cfg = loadConfig()
     expect(cfg.metricsInterval).toBe(60000)
     expect(cfg.logsInterval).toBe(5000)
+  })
+
+  test("copies OPENCODE_OTLP_HEADERS to OTEL_EXPORTER_OTLP_HEADERS", () => {
+    process.env["OPENCODE_OTLP_HEADERS"] = "api-key=abc123"
+    loadConfig()
+    expect(process.env["OTEL_EXPORTER_OTLP_HEADERS"]).toBe("api-key=abc123")
+  })
+
+  test("copies OPENCODE_RESOURCE_ATTRIBUTES to OTEL_RESOURCE_ATTRIBUTES", () => {
+    process.env["OPENCODE_RESOURCE_ATTRIBUTES"] = "team=platform,env=prod"
+    loadConfig()
+    expect(process.env["OTEL_RESOURCE_ATTRIBUTES"]).toBe("team=platform,env=prod")
+  })
+
+  test("does not set OTEL_EXPORTER_OTLP_HEADERS when OPENCODE_OTLP_HEADERS is unset", () => {
+    delete process.env["OPENCODE_OTLP_HEADERS"]
+    loadConfig()
+    expect(process.env["OTEL_EXPORTER_OTLP_HEADERS"]).toBeUndefined()
+  })
+
+  test("does not overwrite pre-existing OTEL_* vars when OPENCODE_* vars are unset", () => {
+    process.env["OTEL_EXPORTER_OTLP_HEADERS"] = "existing-header=value"
+    process.env["OTEL_RESOURCE_ATTRIBUTES"] = "existing=attr"
+    loadConfig()
+    expect(process.env["OTEL_EXPORTER_OTLP_HEADERS"]).toBe("existing-header=value")
+    expect(process.env["OTEL_RESOURCE_ATTRIBUTES"]).toBe("existing=attr")
+  })
+
+  test("OPENCODE_OTLP_HEADERS overwrites pre-existing OTEL_EXPORTER_OTLP_HEADERS", () => {
+    process.env["OTEL_EXPORTER_OTLP_HEADERS"] = "old-header=old"
+    process.env["OPENCODE_OTLP_HEADERS"] = "new-header=new"
+    loadConfig()
+    expect(process.env["OTEL_EXPORTER_OTLP_HEADERS"]).toBe("new-header=new")
+  })
+
+  test("OPENCODE_RESOURCE_ATTRIBUTES overwrites pre-existing OTEL_RESOURCE_ATTRIBUTES", () => {
+    process.env["OTEL_RESOURCE_ATTRIBUTES"] = "old=attr"
+    process.env["OPENCODE_RESOURCE_ATTRIBUTES"] = "new=attr"
+    loadConfig()
+    expect(process.env["OTEL_RESOURCE_ATTRIBUTES"]).toBe("new=attr")
   })
 })
 

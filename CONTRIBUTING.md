@@ -20,7 +20,7 @@ Point your local opencode config at the repo so changes are picked up immediatel
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["/path/to/opencode-plugin-otel/index.ts"]
+  "plugin": ["/path/to/opencode-plugin-otel/src/index.ts"]
 }
 ```
 
@@ -32,7 +32,6 @@ opencode loads TypeScript natively via Bun, so there is no build step required d
 |---------|-------------|
 | `bun run typecheck` | Type-check all sources without emitting |
 | `bun test` | Run the test suite |
-| `bun run build` | Compile to `dist/` for publishing |
 
 ## Project structure
 

@@ -1,7 +1,12 @@
 import * as net from "net"
 
+/** Result of a TCP connectivity probe against the OTLP endpoint. */
 export type ProbeResult = { ok: boolean; ms: number; error?: string }
 
+/**
+ * Opens a TCP connection to the host and port parsed from `endpoint` to verify
+ * reachability before the OTel SDK initialises. Resolves within 5 seconds.
+ */
 export function probeEndpoint(endpoint: string): Promise<ProbeResult> {
   let host: string
   let port: number

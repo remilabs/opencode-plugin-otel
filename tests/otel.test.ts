@@ -1,38 +1,5 @@
-import { describe, test, expect, beforeEach, afterEach } from "bun:test"
-import { parseHeaders, buildResource } from "../src/otel.ts"
-
-describe("parseHeaders", () => {
-  test("returns empty object for undefined", () => {
-    expect(parseHeaders(undefined)).toEqual({})
-  })
-
-  test("returns empty object for empty string", () => {
-    expect(parseHeaders("")).toEqual({})
-  })
-
-  test("parses a single key=value pair", () => {
-    expect(parseHeaders("api-key=abc123")).toEqual({ "api-key": "abc123" })
-  })
-
-  test("parses multiple comma-separated pairs", () => {
-    expect(parseHeaders("api-key=abc,x-tenant=foo")).toEqual({
-      "api-key": "abc",
-      "x-tenant": "foo",
-    })
-  })
-
-  test("trims whitespace around keys and values", () => {
-    expect(parseHeaders(" api-key = abc123 ")).toEqual({ "api-key": "abc123" })
-  })
-
-  test("ignores pairs with no = sign", () => {
-    expect(parseHeaders("no-equals,api-key=abc")).toEqual({ "api-key": "abc" })
-  })
-
-  test("handles values containing = signs", () => {
-    expect(parseHeaders("token=abc=def")).toEqual({ token: "abc=def" })
-  })
-})
+import { describe, test, expect, afterEach } from "bun:test"
+import { buildResource } from "../src/otel.ts"
 
 describe("buildResource", () => {
   const originalEnv = process.env["OTEL_RESOURCE_ATTRIBUTES"]

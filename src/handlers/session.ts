@@ -3,6 +3,7 @@ import type { EventSessionCreated, EventSessionIdle, EventSessionError } from "@
 import { errorSummary } from "../util.ts"
 import type { HandlerContext } from "../types.ts"
 
+/** Increments the session counter and emits a `session.created` log event. */
 export function handleSessionCreated(e: EventSessionCreated, ctx: HandlerContext) {
   const sessionID = e.properties.info.id
   const createdAt = e.properties.info.time.created
@@ -27,6 +28,7 @@ function sweepSession(sessionID: string, ctx: HandlerContext) {
   }
 }
 
+/** Emits a `session.idle` log event and clears any pending tool spans and permissions for the session. */
 export function handleSessionIdle(e: EventSessionIdle, ctx: HandlerContext) {
   const sessionID = e.properties.sessionID
   sweepSession(sessionID, ctx)
@@ -40,6 +42,7 @@ export function handleSessionIdle(e: EventSessionIdle, ctx: HandlerContext) {
   })
 }
 
+/** Emits a `session.error` log event and clears any pending tool spans and permissions for the session. */
 export function handleSessionError(e: EventSessionError, ctx: HandlerContext) {
   const sessionID = e.properties.sessionID ?? "unknown"
   sweepSession(sessionID, ctx)

@@ -1,14 +1,16 @@
 {
   "name": "opencode-plugin-otel",
-  "module": "index.ts",
+  "version": "0.0.1",
+  "module": "src/index.ts",
+  "main": "src/index.ts",
   "type": "module",
+  "files": [
+    "src/"
+  ],
   "devDependencies": {
     "@types/bun": "latest"
   },
   "scripts": {
-    "release:patch": "npm version patch && npm publish",
-    "release:minor": "npm version minor && npm publish",
-    "release:major": "npm version major && npm publish",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
