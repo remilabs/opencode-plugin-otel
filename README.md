@@ -48,7 +48,7 @@ Add the plugin to your opencode config at `~/.config/opencode/opencode.json`:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["opencode-plugin-otel"]
+  "plugin": ["@devtheops/opencode-plugin-otel"]
 }
 ```
 

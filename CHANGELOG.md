@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and 
 
 ---
 
+## [0.2.0] — 2026-03-11
+
+### Changed
+
+- **BREAKING** — Package renamed to `@devtheops/opencode-plugin-otel`. Update your opencode config from `"opencode-plugin-otel"` to `"@devtheops/opencode-plugin-otel"`.
+
+---
+
 ## [0.1.1] — 2026-03-11
 
 ### Fixed

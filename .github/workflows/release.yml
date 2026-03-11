@@ -50,7 +50,7 @@ jobs:
 
           ---
 
-          📦 **npm:** https://www.npmjs.com/package/opencode-plugin-otel/v/${VERSION}"
+          📦 **npm:** https://www.npmjs.com/package/@devtheops/opencode-plugin-otel/v/${VERSION}"
           echo "notes<<EOF" >> "$GITHUB_OUTPUT"
           echo "$NOTES" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
