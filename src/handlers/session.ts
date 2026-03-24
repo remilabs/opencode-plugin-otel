@@ -25,7 +25,7 @@ export function handleSessionCreated(e: EventSessionCreated, ctx: HandlerContext
       : context.active()
 
     const sessionSpan = ctx.tracer.startSpan(
-      "opencode.session",
+      `${ctx.tracePrefix}session`,
       {
         startTime: createdAt,
         attributes: {

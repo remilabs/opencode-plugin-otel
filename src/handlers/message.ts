@@ -214,7 +214,7 @@ export function handleMessagePartUpdated(e: EventMessagePartUpdated, ctx: Handle
               ? trace.setSpan(context.active(), sessionSpan)
               : context.active()
             return ctx.tracer.startSpan(
-              `opencode.tool ${toolPart.tool}`,
+              `${ctx.tracePrefix}tool.${toolPart.tool}`,
               {
                 startTime: toolPart.state.time.start,
                 kind: SpanKind.INTERNAL,
@@ -258,18 +258,25 @@ export function handleMessagePartUpdated(e: EventMessagePartUpdated, ctx: Handle
     }
 
     if (isTraceEnabled("tool", ctx)) {
-      const toolSpan = pending?.span ?? ctx.tracer.startSpan(
-        `opencode.tool ${toolPart.tool}`,
-        {
-          startTime: start,
-          kind: SpanKind.INTERNAL,
-          attributes: {
-            "session.id": toolPart.sessionID,
-            "tool.name": toolPart.tool,
-            ...ctx.commonAttrs,
+      const toolSpan = pending?.span ?? (() => {
+        const sessionSpan = ctx.sessionSpans.get(toolPart.sessionID)
+        const parentCtx = sessionSpan
+          ? trace.setSpan(context.active(), sessionSpan)
+          : context.active()
+        return ctx.tracer.startSpan(
+          `${ctx.tracePrefix}tool.${toolPart.tool}`,
+          {
+            startTime: start,
+            kind: SpanKind.INTERNAL,
+            attributes: {
+              "session.id": toolPart.sessionID,
+              "tool.name": toolPart.tool,
+              ...ctx.commonAttrs,
+            },
           },
-        },
-      )
+          parentCtx,
+        )
+      })()
       toolSpan.setAttribute("tool.success", success)
       if (success) {
         const output = (toolPart.state as { output: string }).output

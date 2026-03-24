@@ -74,6 +74,7 @@ export type HandlerContext = {
   disabledMetrics: Set<string>
   disabledTraces: Set<string>
   tracer: Tracer
+  tracePrefix: string
   sessionSpans: Map<string, Span>
   messageSpans: Map<string, Span>
 }

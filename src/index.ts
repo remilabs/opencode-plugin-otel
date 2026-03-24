@@ -106,6 +106,7 @@ export const OtelPlugin: Plugin = async ({ project, client }) => {
     disabledMetrics,
     disabledTraces,
     tracer,
+    tracePrefix: config.metricPrefix,
     sessionSpans,
     messageSpans,
   }
