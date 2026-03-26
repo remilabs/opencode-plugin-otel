@@ -10,6 +10,7 @@ export type PluginConfig = {
   otlpHeaders: string | undefined
   resourceAttributes: string | undefined
   disabledMetrics: Set<string>
+  disabledTraces: Set<string>
 }
 
 /** Parses a positive integer from an environment variable, returning `fallback` if absent or invalid. */
@@ -41,6 +42,13 @@ export function loadConfig(): PluginConfig {
       .filter(Boolean),
   )
 
+  const disabledTraces = new Set(
+    (process.env["OPENCODE_DISABLE_TRACES"] ?? "")
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean),
+  )
+
   return {
     enabled: !!process.env["OPENCODE_ENABLE_TELEMETRY"],
     endpoint: process.env["OPENCODE_OTLP_ENDPOINT"] ?? "http://localhost:4317",
@@ -50,6 +58,7 @@ export function loadConfig(): PluginConfig {
     otlpHeaders,
     resourceAttributes,
     disabledMetrics,
+    disabledTraces,
   }
 }
 

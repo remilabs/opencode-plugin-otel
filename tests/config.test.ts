@@ -49,6 +49,7 @@ describe("loadConfig", () => {
     "OPENCODE_OTLP_HEADERS",
     "OPENCODE_RESOURCE_ATTRIBUTES",
     "OPENCODE_DISABLE_METRICS",
+    "OPENCODE_DISABLE_TRACES",
     "OTEL_EXPORTER_OTLP_HEADERS",
     "OTEL_RESOURCE_ATTRIBUTES",
   ]
@@ -156,6 +157,50 @@ describe("loadConfig", () => {
   test("disabledMetrics ignores empty segments from trailing commas", () => {
     process.env["OPENCODE_DISABLE_METRICS"] = "session.count,"
     expect(loadConfig().disabledMetrics.size).toBe(1)
+  })
+
+  test("disabledTraces is empty set when OPENCODE_DISABLE_TRACES is unset", () => {
+    expect(loadConfig().disabledTraces.size).toBe(0)
+  })
+
+  test("disabledTraces parses a single trace type", () => {
+    process.env["OPENCODE_DISABLE_TRACES"] = "session"
+    expect(loadConfig().disabledTraces).toEqual(new Set(["session"]))
+  })
+
+  test("disabledTraces parses a comma-separated list", () => {
+    process.env["OPENCODE_DISABLE_TRACES"] = "llm,tool"
+    const { disabledTraces } = loadConfig()
+    expect(disabledTraces.has("llm")).toBe(true)
+    expect(disabledTraces.has("tool")).toBe(true)
+  })
+
+  test("disabledTraces parses all three types together", () => {
+    process.env["OPENCODE_DISABLE_TRACES"] = "session,llm,tool"
+    const { disabledTraces } = loadConfig()
+    expect(disabledTraces.has("session")).toBe(true)
+    expect(disabledTraces.has("llm")).toBe(true)
+    expect(disabledTraces.has("tool")).toBe(true)
+  })
+
+  test("disabledTraces trims whitespace around names", () => {
+    process.env["OPENCODE_DISABLE_TRACES"] = " llm , tool "
+    const { disabledTraces } = loadConfig()
+    expect(disabledTraces.has("llm")).toBe(true)
+    expect(disabledTraces.has("tool")).toBe(true)
+  })
+
+  test("disabledTraces ignores empty segments from trailing commas", () => {
+    process.env["OPENCODE_DISABLE_TRACES"] = "session,"
+    expect(loadConfig().disabledTraces.size).toBe(1)
+  })
+
+  test("disabledTraces passes unknown values through silently", () => {
+    process.env["OPENCODE_DISABLE_TRACES"] = "session,unknown_type"
+    const { disabledTraces } = loadConfig()
+    expect(disabledTraces.has("session")).toBe(true)
+    expect(disabledTraces.has("unknown_type")).toBe(true)
+    expect(disabledTraces.size).toBe(2)
   })
 })
 

@@ -31,6 +31,14 @@ export function isMetricEnabled(name: string, ctx: { disabledMetrics: Set<string
 }
 
 /**
+ * Returns `true` if the trace type is not in the disabled set.
+ * Valid names are `"session"`, `"llm"`, and `"tool"`.
+ */
+export function isTraceEnabled(name: string, ctx: { disabledTraces: Set<string> }): boolean {
+  return !ctx.disabledTraces.has(name)
+}
+
+/**
  * Accumulates token and cost totals for a session, and increments the message count.
  * Uses `setBoundedMap` to produce a new object rather than mutating in-place.
  * No-ops silently if the session was not previously registered via `handleSessionCreated`.

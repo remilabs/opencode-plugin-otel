@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test"
-import { errorSummary, setBoundedMap, isMetricEnabled } from "../src/util.ts"
+import { errorSummary, setBoundedMap, isMetricEnabled, isTraceEnabled } from "../src/util.ts"
 import { MAX_PENDING } from "../src/types.ts"
 
 describe("errorSummary", () => {
@@ -83,5 +83,35 @@ describe("isMetricEnabled", () => {
 
   test("unknown metric names in disabled set do not affect known metrics", () => {
     expect(isMetricEnabled("retry.count", { disabledMetrics: new Set(["does.not.exist"]) })).toBe(true)
+  })
+})
+
+describe("isTraceEnabled", () => {
+  test("returns true when disabled set is empty", () => {
+    expect(isTraceEnabled("session", { disabledTraces: new Set() })).toBe(true)
+  })
+
+  test("returns false when trace type is in the disabled set", () => {
+    expect(isTraceEnabled("session", { disabledTraces: new Set(["session"]) })).toBe(false)
+  })
+
+  test("returns false for llm when llm is disabled", () => {
+    expect(isTraceEnabled("llm", { disabledTraces: new Set(["llm"]) })).toBe(false)
+  })
+
+  test("returns false for tool when tool is disabled", () => {
+    expect(isTraceEnabled("tool", { disabledTraces: new Set(["tool"]) })).toBe(false)
+  })
+
+  test("returns true when a different trace type is disabled", () => {
+    expect(isTraceEnabled("session", { disabledTraces: new Set(["tool"]) })).toBe(true)
+  })
+
+  test("is case-sensitive — does not match mismatched case", () => {
+    expect(isTraceEnabled("session", { disabledTraces: new Set(["Session"]) })).toBe(true)
+  })
+
+  test("unknown trace names in disabled set do not affect known types", () => {
+    expect(isTraceEnabled("llm", { disabledTraces: new Set(["does_not_exist"]) })).toBe(true)
   })
 })
