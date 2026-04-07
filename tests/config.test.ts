@@ -44,6 +44,7 @@ describe("loadConfig", () => {
   const vars = [
     "OPENCODE_ENABLE_TELEMETRY",
     "OPENCODE_OTLP_ENDPOINT",
+    "OPENCODE_OTLP_PROTOCOL",
     "OPENCODE_OTLP_METRICS_INTERVAL",
     "OPENCODE_OTLP_LOGS_INTERVAL",
     "OPENCODE_OTLP_HEADERS",
@@ -60,6 +61,7 @@ describe("loadConfig", () => {
     const cfg = loadConfig()
     expect(cfg.enabled).toBe(false)
     expect(cfg.endpoint).toBe("http://localhost:4317")
+    expect(cfg.protocol).toBe("grpc")
     expect(cfg.metricsInterval).toBe(60000)
     expect(cfg.logsInterval).toBe(5000)
   })
@@ -201,6 +203,59 @@ describe("loadConfig", () => {
     expect(disabledTraces.has("session")).toBe(true)
     expect(disabledTraces.has("unknown_type")).toBe(true)
     expect(disabledTraces.size).toBe(2)
+  })
+
+  test("protocol defaults to grpc when OPENCODE_OTLP_PROTOCOL is unset", () => {
+    expect(loadConfig().protocol).toBe("grpc")
+  })
+
+  test("protocol resolves grpc explicitly", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "grpc"
+    expect(loadConfig().protocol).toBe("grpc")
+  })
+
+  test("protocol resolves http/protobuf explicitly", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "http/protobuf"
+    expect(loadConfig().protocol).toBe("http/protobuf")
+  })
+
+  test("protocol resolves http shorthand to http/protobuf", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "http"
+    expect(loadConfig().protocol).toBe("http/protobuf")
+  })
+
+  test("protocol is case-insensitive", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "GRPC"
+    expect(loadConfig().protocol).toBe("grpc")
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "HTTP"
+    expect(loadConfig().protocol).toBe("http/protobuf")
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "HTTP/PROTOBUF"
+    expect(loadConfig().protocol).toBe("http/protobuf")
+  })
+
+  test("protocol falls back to grpc for unknown values", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "json"
+    expect(loadConfig().protocol).toBe("grpc")
+  })
+
+  test("default endpoint is port 4317 for grpc", () => {
+    expect(loadConfig().endpoint).toBe("http://localhost:4317")
+  })
+
+  test("default endpoint is port 4318 for http/protobuf", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "http/protobuf"
+    expect(loadConfig().endpoint).toBe("http://localhost:4318")
+  })
+
+  test("explicit endpoint overrides default for any protocol", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "http/protobuf"
+    process.env["OPENCODE_OTLP_ENDPOINT"] = "http://collector:4317"
+    expect(loadConfig().endpoint).toBe("http://collector:4317")
+  })
+
+  test("protocol trims whitespace", () => {
+    process.env["OPENCODE_OTLP_PROTOCOL"] = "  http/protobuf  "
+    expect(loadConfig().protocol).toBe("http/protobuf")
   })
 })
 

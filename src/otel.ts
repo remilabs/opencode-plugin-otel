@@ -3,13 +3,17 @@ import { metrics, trace } from "@opentelemetry/api"
 import { LoggerProvider, BatchLogRecordProcessor } from "@opentelemetry/sdk-logs"
 import { MeterProvider, PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics"
 import { BasicTracerProvider, BatchSpanProcessor } from "@opentelemetry/sdk-trace-base"
-import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-grpc"
-import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-grpc"
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc"
+import { OTLPLogExporter as OTLPLogExporterGrpc } from "@opentelemetry/exporter-logs-otlp-grpc"
+import { OTLPMetricExporter as OTLPMetricExporterGrpc } from "@opentelemetry/exporter-metrics-otlp-grpc"
+import { OTLPTraceExporter as OTLPTraceExporterGrpc } from "@opentelemetry/exporter-trace-otlp-grpc"
+import { OTLPLogExporter as OTLPLogExporterHttp } from "@opentelemetry/exporter-logs-otlp-http"
+import { OTLPMetricExporter as OTLPMetricExporterHttp } from "@opentelemetry/exporter-metrics-otlp-http"
+import { OTLPTraceExporter as OTLPTraceExporterHttp } from "@opentelemetry/exporter-trace-otlp-http"
 import { resourceFromAttributes } from "@opentelemetry/resources"
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions"
 import { ATTR_HOST_ARCH } from "@opentelemetry/semantic-conventions/incubating"
 import type { Instruments } from "./types.ts"
+import type { OtlpProtocol } from "./config.ts"
 
 /**
  * Builds an OTel `Resource` seeded with `service.name`, `app.version`, `os.type`, and
@@ -46,22 +50,28 @@ export type OtelProviders = {
 
 /**
  * Initialises the OTel SDK — creates a `MeterProvider`, `LoggerProvider`, and
- * `BasicTracerProvider` backed by OTLP/gRPC exporters pointed at `endpoint`, and
- * registers them as the global providers.
+ * `BasicTracerProvider` backed by OTLP exporters (gRPC or HTTP/protobuf) pointed
+ * at `endpoint`, and registers them as the global providers.
  */
 export function setupOtel(
   endpoint: string,
   metricsInterval: number,
   logsInterval: number,
   version: string,
+  protocol: OtlpProtocol,
 ): OtelProviders {
   const resource = buildResource(version)
+  const useHttp = protocol === "http/protobuf"
+
+  const MetricExporter = useHttp ? OTLPMetricExporterHttp : OTLPMetricExporterGrpc
+  const LogExporter = useHttp ? OTLPLogExporterHttp : OTLPLogExporterGrpc
+  const TraceExporter = useHttp ? OTLPTraceExporterHttp : OTLPTraceExporterGrpc
 
   const meterProvider = new MeterProvider({
     resource,
     readers: [
       new PeriodicExportingMetricReader({
-        exporter: new OTLPMetricExporter({ url: endpoint }),
+        exporter: new MetricExporter({ url: endpoint }),
         exportIntervalMillis: metricsInterval,
       }),
     ],
@@ -71,7 +81,7 @@ export function setupOtel(
   const loggerProvider = new LoggerProvider({
     resource,
     processors: [
-      new BatchLogRecordProcessor(new OTLPLogExporter({ url: endpoint }), {
+      new BatchLogRecordProcessor(new LogExporter({ url: endpoint }), {
         scheduledDelayMillis: logsInterval,
       }),
     ],
@@ -80,7 +90,7 @@ export function setupOtel(
 
   const tracerProvider = new BasicTracerProvider({
     resource,
-    spanProcessors: [new BatchSpanProcessor(new OTLPTraceExporter({ url: endpoint }))],
+    spanProcessors: [new BatchSpanProcessor(new TraceExporter({ url: endpoint }))],
   })
   trace.setGlobalTracerProvider(tracerProvider)
 

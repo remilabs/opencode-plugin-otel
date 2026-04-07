@@ -1,9 +1,12 @@
 import { LEVELS, type Level } from "./types.ts"
 
+export type OtlpProtocol = "grpc" | "http/protobuf"
+
 /** Configuration values resolved from `OPENCODE_*` environment variables. */
 export type PluginConfig = {
   enabled: boolean
   endpoint: string
+  protocol: OtlpProtocol
   metricsInterval: number
   logsInterval: number
   metricPrefix: string
@@ -28,12 +31,25 @@ export function parseEnvInt(key: string, fallback: number): number {
  * `OPENCODE_RESOURCE_ATTRIBUTES` → `OTEL_RESOURCE_ATTRIBUTES` so the OTel SDK
  * picks them up automatically when initialised.
  */
+const VALID_PROTOCOLS = new Set<OtlpProtocol>(["grpc", "http/protobuf"])
+
+function resolveProtocol(): OtlpProtocol {
+  const raw = process.env["OPENCODE_OTLP_PROTOCOL"]?.trim().toLowerCase()
+  if (!raw) return "grpc"
+  if (raw === "http") return "http/protobuf"
+  if (VALID_PROTOCOLS.has(raw as OtlpProtocol)) return raw as OtlpProtocol
+  return "grpc"
+}
+
 export function loadConfig(): PluginConfig {
   const otlpHeaders = process.env["OPENCODE_OTLP_HEADERS"]
   const resourceAttributes = process.env["OPENCODE_RESOURCE_ATTRIBUTES"]
 
   if (otlpHeaders) process.env["OTEL_EXPORTER_OTLP_HEADERS"] = otlpHeaders
   if (resourceAttributes) process.env["OTEL_RESOURCE_ATTRIBUTES"] = resourceAttributes
+
+  const protocol = resolveProtocol()
+  const defaultEndpoint = protocol === "grpc" ? "http://localhost:4317" : "http://localhost:4318"
 
   const disabledMetrics = new Set(
     (process.env["OPENCODE_DISABLE_METRICS"] ?? "")
@@ -51,7 +67,8 @@ export function loadConfig(): PluginConfig {
 
   return {
     enabled: !!process.env["OPENCODE_ENABLE_TELEMETRY"],
-    endpoint: process.env["OPENCODE_OTLP_ENDPOINT"] ?? "http://localhost:4317",
+    endpoint: process.env["OPENCODE_OTLP_ENDPOINT"] ?? defaultEndpoint,
+    protocol,
     metricsInterval: parseEnvInt("OPENCODE_OTLP_METRICS_INTERVAL", 60000),
     logsInterval: parseEnvInt("OPENCODE_OTLP_LOGS_INTERVAL", 5000),
     metricPrefix: process.env["OPENCODE_METRIC_PREFIX"] ?? "opencode.",

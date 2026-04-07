@@ -48,6 +48,7 @@ export const OtelPlugin: Plugin = async ({ project, client }) => {
   await log("info", "starting up", {
     version: PLUGIN_VERSION,
     endpoint: config.endpoint,
+    protocol: config.protocol,
     metricsInterval: config.metricsInterval,
     logsInterval: config.logsInterval,
     metricPrefix: config.metricPrefix,
@@ -73,6 +74,7 @@ export const OtelPlugin: Plugin = async ({ project, client }) => {
     config.metricsInterval,
     config.logsInterval,
     PLUGIN_VERSION,
+    config.protocol,
   )
   await log("info", "OTel SDK initialized")
 
