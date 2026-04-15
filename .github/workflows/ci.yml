@@ -29,6 +29,7 @@ jobs:
 
   publish-gpr:
     needs: ci
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     permissions:
       packages: write
