@@ -1,5 +1,5 @@
 {
-  "name": "@devtheops/opencode-plugin-otel",
+  "name": "@remilabs/opencode-plugin-otel",
   "version": "0.6.0",
   "description": "OpenTelemetry telemetry plugin for opencode CLI",
   "keywords": [
@@ -12,13 +12,13 @@
   ],
   "license": "MPL-2.0",
   "author": "DEVtheOPS",
-  "homepage": "https://github.com/DEVtheOPS/opencode-plugin-otel#readme",
+  "homepage": "https://github.com/remilabs/opencode-plugin-otel#readme",
   "bugs": {
-    "url": "https://github.com/DEVtheOPS/opencode-plugin-otel/issues"
+    "url": "https://github.com/remilabs/opencode-plugin-otel/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/DEVtheOPS/opencode-plugin-otel.git"
+    "url": "https://github.com/remilabs/opencode-plugin-otel.git"
   },
   "type": "module",
   "main": "src/index.ts",
@@ -30,7 +30,7 @@
     "src/"
   ],
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com/"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
