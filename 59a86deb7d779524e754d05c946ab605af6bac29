@@ -1,0 +1,23 @@
+.github/workflows/release-please.yml
+  8f8dca654eff3c11 31-33,40,60-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "59a86deb7d779524e754d05c946ab605af6bac29",
+  "prompts": {
+    "8f8dca654eff3c11": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9cf98a92-7c7a-4651-ba51-da1b4c01a5f6",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Eric Stauffer",
+      "messages": [],
+      "total_additions": 142,
+      "total_deletions": 4,
+      "accepted_lines": 138,
+      "overriden_lines": 0
+    }
+  }
+}
