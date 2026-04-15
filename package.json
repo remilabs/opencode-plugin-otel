@@ -1,6 +1,6 @@
 {
   "name": "@remilabs/opencode-plugin-otel",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "OpenTelemetry telemetry plugin for opencode CLI",
   "keywords": [
     "opentelemetry",

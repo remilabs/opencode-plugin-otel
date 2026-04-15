@@ -6,6 +6,47 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and 
 
 ---
 
+## [1.0.0](https://github.com/remilabs/opencode-plugin-otel/compare/v0.6.0...v1.0.0) (2026-04-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* package name changed from opencode-plugin-otel to @devtheops/opencode-plugin-otel
+
+### Features
+
+* **ci:** add release workflow and clean up plugin packaging ([8f40e61](https://github.com/remilabs/opencode-plugin-otel/commit/8f40e61bad47b586bc3d6b5ecfb496b29610efd1))
+* **config:** add OPENCODE_DISABLE_METRICS to suppress individual metrics ([8ec7c48](https://github.com/remilabs/opencode-plugin-otel/commit/8ec7c486d102921829a26d1f377df6aa20d988ad))
+* **config:** add OPENCODE_DISABLE_METRICS to suppress individual metrics ([2df1376](https://github.com/remilabs/opencode-plugin-otel/commit/2df13762a406040cca464caa5b6b7866bbcc516d))
+* **config:** add OPENCODE_DISABLE_TRACES for per-type trace suppression ([89cb9b9](https://github.com/remilabs/opencode-plugin-otel/commit/89cb9b9b9b1f79559f3930a2017ca16f513785b3))
+* **handlers:** add agent usage metrics and sub-agent tracking ([2d12f88](https://github.com/remilabs/opencode-plugin-otel/commit/2d12f8846425075c4d8aac1573ac6e488bf868c3))
+* **handlers:** add agent usage metrics and sub-agent tracking ([5dedc4e](https://github.com/remilabs/opencode-plugin-otel/commit/5dedc4eb81fa6f36ff8cc883952247a0023d0ceb))
+* **observability:** add debug logging and enhanced metrics ([a1b0a8c](https://github.com/remilabs/opencode-plugin-otel/commit/a1b0a8cf5263080cf9623355e5161fb88f20e2f1))
+* **observability:** add debug logging and enhanced metrics (v0.3.0) ([46681d8](https://github.com/remilabs/opencode-plugin-otel/commit/46681d816dbe34049ef9abccc35cc5b023d5fbdd))
+* **otel:** add HTTP/protobuf transport support alongside gRPC ([0fa33c7](https://github.com/remilabs/opencode-plugin-otel/commit/0fa33c7a1c086ef0e6f58cc2860eb47dd3cbde1e))
+* **otel:** add HTTP/protobuf transport support alongside gRPC ([90231e5](https://github.com/remilabs/opencode-plugin-otel/commit/90231e5f52a578e281d95dfd6080397b7da4e6c7))
+* release workflow, OPENCODE_* env var cleanup, and packaging improvements ([#1](https://github.com/remilabs/opencode-plugin-otel/issues/1)) ([687cbe1](https://github.com/remilabs/opencode-plugin-otel/commit/687cbe1c070d2e154ea17093138001c76c6068d1))
+* rename package to @devtheops/opencode-plugin-otel ([f0af602](https://github.com/remilabs/opencode-plugin-otel/commit/f0af602cb945cd677e0dbc552dc01c5d29e8d9fd))
+* **tracing:** add OpenTelemetry traces with gen_ai.* and tool spans ([0a00b43](https://github.com/remilabs/opencode-plugin-otel/commit/0a00b43c714c45146ac93b9077c478127727e6ce))
+* **tracing:** add OpenTelemetry traces with gen_ai.* and tool spans ([6c848a7](https://github.com/remilabs/opencode-plugin-otel/commit/6c848a7bca237ab60e7035244d4889dae44560ca)), closes [#19](https://github.com/remilabs/opencode-plugin-otel/issues/19)
+
+
+### Bug Fixes
+
+* **ci:** fix indentation in changelog extraction step ([9b9b01e](https://github.com/remilabs/opencode-plugin-otel/commit/9b9b01efd34312e964c1041fe84a199b2ce98c1c))
+* **ci:** remove NODE_AUTH_TOKEN to allow OIDC trusted publishing ([fa4cbc7](https://github.com/remilabs/opencode-plugin-otel/commit/fa4cbc72d5e32ac471f3291b154f5b7c1c5aa097))
+* **config:** address code review findings on disable-metrics feature ([1929327](https://github.com/remilabs/opencode-plugin-otel/commit/1929327d29eb130280625b41d2a3d36be1cdc52f))
+* **config:** reject partial numeric strings in parseEnvInt ([92bb54a](https://github.com/remilabs/opencode-plugin-otel/commit/92bb54adf4519469cfb9b2327c0411caf466a7e3))
+* **config:** rename all env vars to OPENCODE_* prefix ([63ca65a](https://github.com/remilabs/opencode-plugin-otel/commit/63ca65aa29dd6f771b5ad104fbf2d0aaac18fb84))
+* Normalize token and cost units for Claude compatibility ([a8b35dc](https://github.com/remilabs/opencode-plugin-otel/commit/a8b35dc65e84c646b40abccc534afb6110ba2f26))
+* **otel:** normalize session token and cost units ([12bfafe](https://github.com/remilabs/opencode-plugin-otel/commit/12bfafe6b5c31c9a8ec8db09b1cd3c83a8b39ad4))
+* **otel:** normalize token and cost units for claude compatibility ([aa3deca](https://github.com/remilabs/opencode-plugin-otel/commit/aa3deca8cd3323a5d1f9fc749b43d0992f1ba50a))
+* **otel:** use UCUM-compliant unit strings for all metric instruments ([46681d8](https://github.com/remilabs/opencode-plugin-otel/commit/46681d816dbe34049ef9abccc35cc5b023d5fbdd))
+* **otel:** use UCUM-compliant unit strings for all metric instruments ([040b0b3](https://github.com/remilabs/opencode-plugin-otel/commit/040b0b3f8b353785e976bbfd59d43250bfb58ef6))
+* **probe:** use protocol-aware default port for endpoint probing ([fa0e6ac](https://github.com/remilabs/opencode-plugin-otel/commit/fa0e6ac6d48758f5729834f96257727250cbf2d2))
+* **probe:** use protocol-aware default port for endpoint probing ([73ae4d0](https://github.com/remilabs/opencode-plugin-otel/commit/73ae4d05c13cc6b4d34140a87d555ad7efbf37e8))
+* **traces:** apply metricPrefix to opencode span names and fix out-of-order parentage ([65f1e70](https://github.com/remilabs/opencode-plugin-otel/commit/65f1e70ec592a571dd5fd410769920cc5c6e1142))
+
 ## [0.6.0](https://github.com/DEVtheOPS/opencode-plugin-otel/compare/v0.5.0...v0.6.0) (2026-03-26)
 
 
