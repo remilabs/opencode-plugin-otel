@@ -1,0 +1,23 @@
+.github/workflows/ci.yml
+  8f8dca654eff3c11 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "50b6310cf5aa5058ed39b9c436d0ef2991c99107",
+  "prompts": {
+    "8f8dca654eff3c11": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9cf98a92-7c7a-4651-ba51-da1b4c01a5f6",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Eric Stauffer",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
