@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "43b3c751b4dfd87e44678ccba0c84e9ff5ca28d7",
+  "prompts": {
+    "8f8dca654eff3c11": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9cf98a92-7c7a-4651-ba51-da1b4c01a5f6",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Eric Stauffer",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 1,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  }
+}
